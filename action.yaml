@@ -39,15 +39,24 @@ inputs:
 runs:
   using: composite
   steps:
-    - id: maven3.9-compile
-      kind:
+    - id: code-checkout
+      name: Check out repo
+      kind: build
+      uses: cloudbees-io/checkout@v1
+      with:
+        provider: ${{ cloudbees.scm.provider }}
+        repository: ${{ cloudbees.repository }}
+
+    - id: maven3_9-compile
+      kind: build
       uses: docker://maven:3.9-amazoncorretto-17
       shell: sh
       run: |
         mvn version
 
-    - id: maven3.9-test
+    - id: maven3_9-test
       uses: docker://maven:3.9-amazoncorretto-17
+      kind: test
       shell: sh
       run: |
         mvn version
