@@ -7,6 +7,9 @@ inputs:
   CONTEXT:
     description: 'App build context'
     default: ${{ cloudbees.workspace }}
+  REPO:
+    description: 'Application Repo'
+    required: true
   BUILD-ARGS:
     description: 'Maven build arguments'
     required: false
@@ -45,7 +48,7 @@ runs:
       uses: cloudbees-io/checkout@v1
       with:
         provider: ${{ cloudbees.scm.provider }}
-        repository: ${{ cloudbees.repository }}
+        repository: ${{ inputs.REPO }}
 
     - id: maven3_9-compile
       kind: build
