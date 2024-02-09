@@ -48,21 +48,21 @@ runs:
       uses: cloudbees-io/checkout@v1
       with:
         provider: ${{ cloudbees.scm.provider }}
-        repository: ${{ inputs.REPO }}
+        repository: ${{ cloudbees.scm.repository }} #${{ inputs.REPO }}
 
     - id: maven3_9-compile
       kind: build
       uses: docker://maven:3.9-amazoncorretto-17
       shell: sh
       run: |
-        mvn version
+        mvn -v
 
     - id: maven3_9-test
       uses: docker://maven:3.9-amazoncorretto-17
       kind: test
       shell: sh
       run: |
-        mvn version
+        mvn -v
 
     # - id: sonarqube
     #   uses: cloudbees-io/sonarqube
