@@ -1,0 +1,70 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: action
+name: 'UniversalWorkflow'
+description: 'The Universal Workflow'
+
+inputs:
+  CONTEXT:
+    description: 'App build context'
+    default: ${{ cloudbees.workspace }}
+  BUILD-ARGS:
+    description: 'Maven build arguments'
+    required: false
+    default: ''
+  TEST-ARGS:
+    description: 'Maven test arguments'
+    required: false
+    default: ''
+  SQ-PROJECT-ID:
+    description: 'SonarQube Project ID'
+    required: false
+    default: ''
+  ARTIFACTORY-DESTINATION:
+    description: ''
+    required: false
+    default: ''
+  KANIKO-BUILD-ARGS:
+    description: 'Kaniko Build Args'
+    required: false
+    default: ''
+  KANIKO-LABELS:
+    description: 'Kaniko Labels'
+    required: false
+    default: ''
+  DOCKERFILE:
+    description: 'Dockerfile name'
+    required: false
+    default: 'Dockerfile'
+
+runs:
+  using: composite
+  steps:
+    - id: maven3.9-compile
+      kind:
+      uses: docker://maven:3.9-amazoncorretto-17
+      shell: sh
+      run: |
+        mvn version
+
+    - id: maven3.9-test
+      uses: docker://maven:3.9-amazoncorretto-17
+      shell: sh
+      run: |
+        mvn version
+
+    # - id: sonarqube
+    #   uses: cloudbees-io/sonarqube
+    #   with:
+    #       serverURL: "SonarQube server URL"
+    #       username: "SonarQube username"
+    #       password: "SonarQube password"
+    #       language: "LANGUAGE_YOURCODELANGUAGE"
+
+    - id: kaniko
+      uses: cloudbees-io/kaniko
+      with:
+          dockerfile: ${{ inputs.DOCKERFILE }}
+          context: ${{ inputs.CONTEXT }}
+          destination: ${{ inputs.ARTIFACTORY-DESTINATION }}
+          build-args: ${{ inputs.KANIKO-BUILD-ARGS }}
+          labels: ${{ inputs.KANIKO-LABELS }}
