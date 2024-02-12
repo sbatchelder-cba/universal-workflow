@@ -109,9 +109,9 @@ runs:
     #     language: "LANGUAGE_GO"
     - id: sonarqube
       if: ${{ inputs.SQ-PROJECT-KEY != '' }}
-      uses: sbatchelder-cba/sonarqube-cba@v0.0.1
+      uses: sbatchelder-cba/sonarqube-cba@v0.0.2
       with:
-        source: ${{ inputs.CONTEXT }}
+        sources: ${{ inputs.CONTEXT }}
         project-key: customer1-app1
         host-url: "https://sonarqube.cb-demos.io"
         token: ${{ inputs.SONARQUBE-TOKEN }}
