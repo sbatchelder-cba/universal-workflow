@@ -57,7 +57,7 @@ runs:
         repository: ${{ cloudbees.scm.repository }}
 
     - id: ci-maven3_9
-      if: ${{ inputs.MVN-COMPILE-ARGS == "" }}
+      if: inputs.MVN-COMPILE-ARGS == ""
       uses: sbatchelder-cba/ci-maven3.9@v0.0.1
       with:
         context: ${{ inputs.CONTEXT }}
@@ -65,7 +65,7 @@ runs:
         mvn-test-args: ${{ inputs.MVN-TEST-ARGS }}
 
     - id: ci-groovy3_9
-      if: ${{ inputs.GROOVY-BUILD-ARGS != ""}}
+      if: inputs.GROOVY-BUILD-ARGS != """
       uses: sbatchelder-cba/ci-groovy@v0.0.1
       with:
         context: ${{ inputs.CONTEXT }}
@@ -92,7 +92,7 @@ runs:
 
     # Analysis Phase
     - id: sonarqube
-      if: ${{ inputs.SQ-PROJECT-KEY != "" }}
+      if: inputs.SQ-PROJECT-KEY != ""
       uses: cloudbees-io/sonarqube@v1.0.17
       with:
         serverURL: "https://sonarqube.cb-demos.io"
