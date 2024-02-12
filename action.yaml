@@ -68,10 +68,9 @@ runs:
       if: ${{ inputs.GROOVY-BUILD-ARGS }}
       uses: sbatchelder-cba/ci-groovy@v0.0.1
       with:
-        context:
-          context: ${{ inputs.CONTEXT }}
-          groovy-build-args: ${{ inputs.GROOVY-BUILD-ARGS }}
-          groovy-test-args: ${{ inputs.GROOVY-TEST-ARGS }}
+        context: ${{ inputs.CONTEXT }}
+        groovy-build-args: ${{ inputs.GROOVY-BUILD-ARGS }}
+        groovy-test-args: ${{ inputs.GROOVY-TEST-ARGS }}
 
     # Not sure if kaniko bits should live here or in the tech specific CI custom action
     # It is DRY-er if it lives here, so it is here now
@@ -96,10 +95,10 @@ runs:
       if: ${{ inputs.SQ-PROJECT-KEY }}
       uses: cloudbees-io/sonarqube@v1.0.17
       with:
-          serverURL: "https://sonarqube.cb-demos.io"
-          username: "admin"
-          password: ${{ secrets.SONARQUBE_TOKEN }}
-          language: "LANGUAGE_MAVEN"
+        serverURL: "https://sonarqube.cb-demos.io"
+        username: "admin"
+        password: ${{ secrets.SONARQUBE_TOKEN }}
+        language: "LANGUAGE_MAVEN"
 
     # - name: Coverity Scan
     #   if: ${{ vars.coverityScan == true }
