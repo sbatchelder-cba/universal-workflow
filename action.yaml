@@ -44,12 +44,11 @@ inputs:
     required: false
     default: 'Dockerfile'
   SBATCHELDER_DOCKERHUB_TOKEN:
-    required: false
-    default: ${{ secrets.SBATCHELDER_DOCKERHUB_TOKEN }}
+    required: true
+    default: ''
   SONARQUBE_TOKEN:
-    required: false
-    default: ${{ secrets.SONARQUBE_TOKEN }}
-
+    required: true
+    default: ''
 runs:
   using: composite
   steps:
