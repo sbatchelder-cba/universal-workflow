@@ -7,19 +7,20 @@ inputs:
   CONTEXT:
     description: 'App build context'
     default: ${{ cloudbees.workspace }}
-  REPO:
-    description: 'Application Repo'
-    required: true
-  BUILD-ARGS:
-    description: 'Maven build arguments'
+  MVN-COMPILE-ARGS:
+    description: 'Maven compile arguments'
     required: false
-    default: ''
-  TEST-ARGS:
+  MVN-TEST-ARGS:
     description: 'Maven test arguments'
     required: false
-    default: ''
-  SQ-PROJECT-ID:
-    description: 'SonarQube Project ID'
+  GROOVY-BUILD-ARGS:
+    description: 'Groovy build arguments'
+    required: false
+  GROOVY-TEST-ARGS:
+    description: 'Groovy test arguments'
+    required: false
+  SQ-PROJECT-KEY:
+    description: 'SonarQube Project Key'
     required: false
     default: ''
   ARTIFACTORY-DESTINATION:
@@ -42,41 +43,72 @@ inputs:
 runs:
   using: composite
   steps:
+    # Build Phase
     - id: code-checkout
       name: Check out repo
       kind: build
       uses: cloudbees-io/checkout@v1
       with:
         provider: ${{ cloudbees.scm.provider }}
-        repository: ${{ cloudbees.scm.repository }} #${{ inputs.REPO }}
+        repository: ${{ cloudbees.scm.repository }}
 
-    - id: maven3_9-compile
-      kind: build
-      uses: docker://maven:3.9-amazoncorretto-17
-      shell: sh
-      run: |
-        mvn -v
+    - id: ci-maven3.9
+      if: ${{ inputs.MVN-COMPILE-ARGS }}
+      uses: sbatchelder-cba/ci-maven@v0.0.1
+      with:
+        context:
+        mvn-compile-args: ${{ inputs.MVN-COMPILE-ARGS }}
+        mvn-test-args: ${{ inputs.MVN-TEST-ARGS }}
 
-    - id: maven3_9-test
-      uses: docker://maven:3.9-amazoncorretto-17
-      kind: test
-      shell: sh
-      run: |
-        mvn -v
+    - id: ci-groovy3.9
+      if: ${{ inputs.GROOVY-BUILD-ARGS }}
+      uses: sbatchelder-cba/ci-groovy@v0.0.1
+      with:
+        context:
+          groovy-build-args: ${{ inputs.GROOVY-BUILD-ARGS }}
+          groovy-test-args: ${{ inputs.GROOVY-TEST-ARGS }}
 
-    # - id: sonarqube
+    # Not sure if kaniko bits should live here or in the tech specific CI custom action
+    # It is DRY-er if it lives here, so it is here now
+    - name: Log in to OCI registry
+      uses: cloudbees-io/configure-oci-credentials@v1
+      with:
+        registry: docker.io
+        username: sbatchelder@cloudbees.com
+        password: ${{ secrets.SBATCHELDER_DOCKERHUB_TOKEN }}
+
+    # - id: kaniko
+    #   uses: cloudbees-io/kaniko
+    #   with:
+    #       dockerfile: ${{ inputs.DOCKERFILE }}
+    #       context: ${{ inputs.CONTEXT }}
+    #       destination: ${{ inputs.ARTIFACTORY-DESTINATION }}
+    #       build-args: ${{ inputs.KANIKO-BUILD-ARGS }}
+    #       labels: ${{ inputs.KANIKO-LABELS }}
+
+    # Analysis Phase
+    - id: sonarqube
+      if: ${{ inputs.SQ-PROJECT-KEY }}
+      uses: cloudbees-io/sonarqube@v1.0.17
+      with:
+          serverURL: "https://sonarqube.cb-demos.io"
+          username: "admin"
+          password: ${{ secrets.SONARQUBE_TOKEN }}
+          language: "LANGUAGE_MAVEN"
+
+    # - name: Coverity Scan
+    #   if: ${{ vars.coverityScan == true }
     #   uses: cloudbees-io/sonarqube
     #   with:
-    #       serverURL: "SonarQube server URL"
-    #       username: "SonarQube username"
-    #       password: "SonarQube password"
-    #       language: "LANGUAGE_YOURCODELANGUAGE"
+        
 
-    - id: kaniko
-      uses: cloudbees-io/kaniko
-      with:
-          dockerfile: ${{ inputs.DOCKERFILE }}
-          context: ${{ inputs.CONTEXT }}
-          destination: ${{ inputs.ARTIFACTORY-DESTINATION }}
-          build-args: ${{ inputs.KANIKO-BUILD-ARGS }}
-          labels: ${{ inputs.KANIKO-LABELS }}
+    # - name: Black Duck Scan
+    #   if: ${{ vars.blackduckScan == true }
+    #   uses: sbatchelder-cba/blackduck@v0.0.1
+    #   with:
+        
+
+    # Release Build Phase
+
+
+    # Deployment Build Phase
