@@ -111,6 +111,7 @@ runs:
       if: ${{ inputs.SQ-PROJECT-KEY != '' }}
       uses: sbatchelder-cba/sonarqube-cba@v0.0.1
       with:
+        source: ${{ inputs.CONTEXT }}
         project-key: customer1-app1
         host-url: "https://sonarqube.cb-demos.io"
         token: ${{ inputs.SONARQUBE-TOKEN }}
