@@ -43,6 +43,12 @@ inputs:
     description: 'Dockerfile name'
     required: false
     default: 'Dockerfile'
+  SBATCHELDER_DOCKERHUB_TOKEN:
+    required: false
+    default: ${{ secrets.SBATCHELDER_DOCKERHUB_TOKEN }}
+  SONARQUBE_TOKEN:
+    required: false
+    default: ${{ secrets.SONARQUBE_TOKEN }}
 
 runs:
   using: composite
@@ -80,7 +86,7 @@ runs:
       with:
         registry: docker.io
         username: sbatchelder@cloudbees.com
-        password: ${{ actionsecrets.SBATCHELDER_DOCKERHUB_TOKEN }}
+        password: ${{ inputs.SBATCHELDER_DOCKERHUB_TOKEN }}
 
     # - id: kaniko
     #   uses: cloudbees-io/kaniko
@@ -98,7 +104,7 @@ runs:
       with:
         serverURL: "https://sonarqube.cb-demos.io"
         username: "admin"
-        password: ${{ secrets.SONARQUBE_TOKEN }}
+        password: ${{ inputs.SONARQUBE_TOKEN }}
         language: "LANGUAGE_JAVA"
 
     # - name: Coverity Scan
