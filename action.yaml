@@ -56,15 +56,15 @@ runs:
         provider: ${{ cloudbees.scm.provider }}
         repository: ${{ cloudbees.scm.repository }}
 
-    - id: ci-maven3.9
+    - id: ci-maven3_9
       if: ${{ inputs.MVN-COMPILE-ARGS }}
-      uses: sbatchelder-cba/ci-maven@v0.0.1
+      uses: sbatchelder-cba/ci-maven3.9@v0.0.1
       with:
         context: ${{ inputs.CONTEXT }}
         mvn-compile-args: ${{ inputs.MVN-COMPILE-ARGS }}
         mvn-test-args: ${{ inputs.MVN-TEST-ARGS }}
 
-    - id: ci-groovy3.9
+    - id: ci-groovy3_9
       if: ${{ inputs.GROOVY-BUILD-ARGS }}
       uses: sbatchelder-cba/ci-groovy@v0.0.1
       with:
