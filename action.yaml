@@ -10,15 +10,19 @@ inputs:
   MVN-COMPILE-ARGS:
     description: 'Maven compile arguments'
     required: false
+    default: ''
   MVN-TEST-ARGS:
     description: 'Maven test arguments'
     required: false
+    default: ''
   GROOVY-BUILD-ARGS:
     description: 'Groovy build arguments'
     required: false
+    default: ''
   GROOVY-TEST-ARGS:
     description: 'Groovy test arguments'
     required: false
+    default: ''
   SQ-PROJECT-KEY:
     description: 'SonarQube Project Key'
     required: false
