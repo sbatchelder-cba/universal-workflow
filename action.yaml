@@ -104,7 +104,7 @@ runs:
         server-url: "https://sonarqube.cb-demos.io"
         username: "admin"
         password: ${{ inputs.SONARQUBE-TOKEN }}
-        language: "LANGUAGE_JAVA"
+        language: "LANGUAGE_GO"
 
     # - name: Coverity Scan
     #   if: ${{ vars.coverityScan == true }
