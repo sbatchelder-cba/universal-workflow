@@ -97,18 +97,27 @@ runs:
     #       labels: ${{ inputs.KANIKO-LABELS }}
 
     # Analysis Phase
+
+    # - id: sonarqube
+    #   if: ${{ inputs.SQ-PROJECT-KEY != '' }}
+    #   uses: cloudbees-io/sonarqube-sast-scan-code@v1
+    #   with:
+    #     server-url: "https://sonarqube.cb-demos.io"
+    #     username: "admin"
+    #     password: ${{ inputs.SONARQUBE-TOKEN }}
+    #     # Java is not supported yet
+    #     language: "LANGUAGE_GO"
     - id: sonarqube
       if: ${{ inputs.SQ-PROJECT-KEY != '' }}
-      uses: cloudbees-io/sonarqube-sast-scan-code@v1
+      uses: sbatchelder-cba/sonarqube-cba@v0.0.1
       with:
-        server-url: "https://sonarqube.cb-demos.io"
-        username: "admin"
-        password: ${{ inputs.SONARQUBE-TOKEN }}
-        language: "LANGUAGE_GO"
+        project-key: customer1-app1
+        host-url: "https://sonarqube.cb-demos.io"
+        token: ${{ inputs.SONARQUBE-TOKEN }}
 
     # - name: Coverity Scan
     #   if: ${{ vars.coverityScan == true }
-    #   uses: cloudbees-io/sonarqube
+    #   uses: cloudbees-io/coverity
     #   with:
         
 
