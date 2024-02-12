@@ -80,7 +80,7 @@ runs:
       with:
         registry: docker.io
         username: sbatchelder@cloudbees.com
-        password: ${{ secrets.SBATCHELDER_DOCKERHUB_TOKEN }}
+        password: ${{ actionsecrets.SBATCHELDER_DOCKERHUB_TOKEN }}
 
     # - id: kaniko
     #   uses: cloudbees-io/kaniko
