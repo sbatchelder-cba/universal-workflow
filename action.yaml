@@ -99,7 +99,7 @@ runs:
     # Analysis Phase
     - id: sonarqube
       if: ${{ inputs.SQ-PROJECT-KEY != '' }}
-      uses: cloudbees-io/sonarqube@v1
+      uses: cloudbees-io/sonarqube-sast-scan-code@v1
       with:
         serverURL: "https://sonarqube.cb-demos.io"
         username: "admin"
