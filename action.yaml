@@ -87,14 +87,14 @@ runs:
         username: sbatchelder@cloudbees.com
         password: ${{ inputs.KANIKO-TOKEN }}
 
-    # - id: kaniko
-    #   uses: cloudbees-io/kaniko
-    #   with:
-    #       dockerfile: ${{ inputs.DOCKERFILE }}
-    #       context: ${{ inputs.CONTEXT }}
-    #       destination: ${{ inputs.ARTIFACTORY-DESTINATION }}
-    #       build-args: ${{ inputs.KANIKO-BUILD-ARGS }}
-    #       labels: ${{ inputs.KANIKO-LABELS }}
+    - id: kaniko
+      uses: cloudbees-io/kaniko
+      with:
+          dockerfile: ${{ inputs.DOCKERFILE }}
+          context: ${{ inputs.CONTEXT }}
+          destination: ${{ inputs.ARTIFACTORY-DESTINATION }}
+          build-args: ${{ inputs.KANIKO-BUILD-ARGS }}
+          labels: ${{ inputs.KANIKO-LABELS }}
 
     # Analysis Phase
 
