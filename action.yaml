@@ -101,7 +101,7 @@ runs:
       if: ${{ inputs.SQ-PROJECT-KEY != '' }}
       uses: cloudbees-io/sonarqube-sast-scan-code@v1
       with:
-        serverURL: "https://sonarqube.cb-demos.io"
+        server-url: "https://sonarqube.cb-demos.io"
         username: "admin"
         password: ${{ inputs.SONARQUBE-TOKEN }}
         language: "LANGUAGE_JAVA"
