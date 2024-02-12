@@ -64,13 +64,14 @@ runs:
         mvn-compile-args: ${{ inputs.MVN-COMPILE-ARGS }}
         mvn-test-args: ${{ inputs.MVN-TEST-ARGS }}
 
-    - id: ci-groovy3_9
-      if: ${{ inputs.GROOVY-BUILD-ARGS != '' }}
-      uses: sbatchelder-cba/ci-groovy@v0.0.1
-      with:
-        context: ${{ inputs.CONTEXT }}
-        groovy-build-args: ${{ inputs.GROOVY-BUILD-ARGS }}
-        groovy-test-args: ${{ inputs.GROOVY-TEST-ARGS }}
+    # custom action is evaluated before the conditional... annoying
+    # - id: ci-groovy3_9
+    #   if: ${{ inputs.GROOVY-BUILD-ARGS != '' }}
+    #   uses: sbatchelder-cba/ci-groovy@v0.0.1
+    #   with:
+    #     context: ${{ inputs.CONTEXT }}
+    #     groovy-build-args: ${{ inputs.GROOVY-BUILD-ARGS }}
+    #     groovy-test-args: ${{ inputs.GROOVY-TEST-ARGS }}
 
     # Not sure if kaniko bits should live here or in the tech specific CI custom action
     # It is DRY-er if it lives here, so it is here now
