@@ -63,7 +63,7 @@ runs:
 
     - id: ci-maven3_9
       if: ${{ inputs.MVN-COMPILE-ARGS == '' }}
-      uses: sbatchelder-cba/ci-maven-3.9@v0.0.2
+      uses: sbatchelder-cba/ci-maven-3.9@v0.0.3
       with:
         context: ${{ inputs.CONTEXT }}
         mvn-compile-args: ${{ inputs.MVN-COMPILE-ARGS }}
@@ -88,6 +88,7 @@ runs:
         password: ${{ inputs.KANIKO-TOKEN }}
 
     - id: kaniko
+      name: Upload via Kaniko
       uses: cloudbees-io/kaniko
       with:
           dockerfile: ${{ inputs.DOCKERFILE }}
@@ -109,7 +110,7 @@ runs:
     #     language: "LANGUAGE_GO"
     - id: sonarqube
       if: ${{ inputs.SQ-PROJECT-KEY != '' }}
-      uses: sbatchelder-cba/sonarqube-cba@v0.0.2
+      uses: sbatchelder-cba/sonarqube-cba@v0.0.3
       with:
         sources: ${{ inputs.CONTEXT }}
         project-key: customer1-app1
