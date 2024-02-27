@@ -4,9 +4,45 @@ name: 'UniversalWorkflow'
 description: 'The Universal Workflow'
 
 inputs:
-  CONFIG_YAML:
-    description: 'asdf'
+  CONTEXT:
+    description: 'App build context'
+    default: ${{ cloudbees.workspace }}
+  MVN-COMPILE-ARGS:
+    description: 'Maven compile arguments'
+    required: false
     default: ''
+  MVN-TEST-ARGS:
+    description: 'Maven test arguments'
+    required: false
+    default: ''
+  GROOVY-BUILD-ARGS:
+    description: 'Groovy build arguments'
+    required: false
+    default: ''
+  GROOVY-TEST-ARGS:
+    description: 'Groovy test arguments'
+    required: false
+    default: ''
+  SQ-PROJECT-KEY:
+    description: 'SonarQube Project Key'
+    required: false
+    default: ''
+  ARTIFACTORY-DESTINATION:
+    description: ''
+    required: false
+    default: ''
+  KANIKO-BUILD-ARGS:
+    description: 'Kaniko Build Args'
+    required: false
+    default: ''
+  KANIKO-LABELS:
+    description: 'Kaniko Labels'
+    required: false
+    default: ''
+  DOCKERFILE:
+    description: 'Dockerfile name'
+    required: false
+    default: 'Dockerfile'
   KANIKO-TOKEN:
     required: true
     default: ''
@@ -25,32 +61,13 @@ runs:
         provider: ${{ cloudbees.scm.provider }}
         repository: ${{ cloudbees.scm.repository }}
 
-    - name: Read config.yaml
-      id: readconfig
-      kind: build
-      uses: docker://python:3.12-alpine3.19
-      shell: sh
-      run: |
-        apk add yq
-        yq '.cb-platform.component.app1-ui.context' ${{ inputs.CONFIG_FILE}} > "$CLOUDBEES_OUTPUTS/CONTEXT"
-        yq '.cb-platform.component.app1-ui.mvn-compile-args' ${{ inputs.CONFIG_FILE}} > "$CLOUDBEES_OUTPUTS/MVN-COMPILE-ARGS"
-        yq '.cb-platform.component.app1-ui.mvn-test-args' ${{ inputs.CONFIG_FILE}} > "$CLOUDBEES_OUTPUTS/MVN-TEST-ARGS"
-        yq '.cb-platform.component.app1-ui.sq-project-key' ${{ inputs.CONFIG_FILE}} > "$CLOUDBEES_OUTPUTS/SQ-PROJECT-KEY"
-        yq '.cb-platform.component.app1-ui.artifact-destination' ${{ inputs.CONFIG_FILE}} > "$CLOUDBEES_OUTPUTS/ARTIFACT-DESTINATION"
-        yq '.cb-platform.component.app1-ui.kaniko-build-args' ${{ inputs.CONFIG_FILE}} > "$CLOUDBEES_OUTPUTS/KANIKO-BUILD-ARGS"
-        yq '.cb-platform.component.app1-ui.kaniko-label' ${{ inputs.CONFIG_FILE}} > "$CLOUDBEES_OUTPUTS/KANIKO-LABEL"
-        yq '.cb-platform.component.app1-ui.dockerfile' ${{ inputs.CONFIG_FILE}} > "$CLOUDBEES_OUTPUTS/DOCKERFILE"
-
-
     - id: ci-maven3_9
-      #if: ${{ inputs.MVN-COMPILE-ARGS == '' }}
-      if: ${{ steps.readconfig.outputs.MVN-COMPILE-ARGS }}
+      if: ${{ inputs.MVN-COMPILE-ARGS == '' }}
       uses: sbatchelder-cba/ci-maven-3.9@v0.0.3
       with:
-        # context: ${{ inputs.CONTEXT }}
-        context: ${{ steps.readconfig.outputs.CONTEXT }}
-        mvn-compile-args: ${{ steps.readconfig.outputs.MVN-COMPILE-ARGS }}
-        mvn-test-args: ${{ steps.readconfig.outputs.MVN-TEST-ARGS }}
+        context: ${{ inputs.CONTEXT }}
+        mvn-compile-args: ${{ inputs.MVN-COMPILE-ARGS }}
+        mvn-test-args: ${{ inputs.MVN-TEST-ARGS }}
 
     # custom action is evaluated before the conditional... annoying
     # - id: ci-groovy3_9
@@ -74,11 +91,11 @@ runs:
       name: Upload via Kaniko
       uses: cloudbees-io/kaniko
       with:
-          dockerfile: ${{ steps.readconfig.outputs.DOCKERFILE }}
-          context: ${{ steps.readconfig.outputs.CONTEXT }}
-          destination: ${{ steps.readconfig.outputs.ARTIFACT-DESTINATION }}
-          build-args: ${{ steps.readconfig.outputs.KANIKO-BUILD-ARGS }}
-          labels: ${{ steps.readconfig.outputs.KANIKO-LABELS }}
+          dockerfile: ${{ inputs.DOCKERFILE }}
+          context: ${{ inputs.CONTEXT }}
+          destination: ${{ inputs.ARTIFACTORY-DESTINATION }}
+          build-args: ${{ inputs.KANIKO-BUILD-ARGS }}
+          labels: ${{ inputs.KANIKO-LABELS }}
 
     # Analysis Phase
 
@@ -95,7 +112,7 @@ runs:
       if: ${{ inputs.SQ-PROJECT-KEY != '' }}
       uses: sbatchelder-cba/sonarqube-cba@v0.0.3
       with:
-        sources: ${{ steps.readconfig.outputs.CONTEXT }}
+        sources: ${{ inputs.CONTEXT }}
         project-key: customer1-app1
         host-url: "https://sonarqube.cb-demos.io"
         token: ${{ inputs.SONARQUBE-TOKEN }}
