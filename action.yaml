@@ -92,7 +92,7 @@ runs:
     #     # Java is not supported yet
     #     language: "LANGUAGE_GO"
     - id: sonarqube
-      if: ${{ inputs.SQ-PROJECT-KEY != '' }}
+      if: ${{ steps.readconfig.outputs.SQ-PROJECT-KEY != '' }}
       uses: sbatchelder-cba/sonarqube-cba@v0.0.3
       with:
         sources: ${{ steps.readconfig.outputs.CONTEXT }}
