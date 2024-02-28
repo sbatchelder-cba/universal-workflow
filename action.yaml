@@ -79,7 +79,8 @@ runs:
       shell: sh
       run: |
         pwd ; ls -la
-        echo ${{ steps.readconfig.outputs.CONTEXT }}
+        echo Dockerfile path is ${{ steps.readconfig.outputs.DOCKERFILE }}
+        ls -l ${{ steps.readconfig.outputs.DOCKERFILE }}
 
     - id: kaniko
       name: Upload via Kaniko
