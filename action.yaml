@@ -35,14 +35,14 @@ runs:
       run: |
         pwd ; ls -la
         apk add yq
-        yq '.cb-platform.component.app1-ui.context' ${{ inputs.CONFIG_FILE }} > "$CLOUDBEES_OUTPUTS/CONTEXT"
-        yq '.cb-platform.component.app1-ui.mvn-compile-args' ${{ inputs.CONFIG_FILE }} > "$CLOUDBEES_OUTPUTS/MVN-COMPILE-ARGS"
-        yq '.cb-platform.component.app1-ui.mvn-test-args' ${{ inputs.CONFIG_FILE }} > "$CLOUDBEES_OUTPUTS/MVN-TEST-ARGS"
-        yq '.cb-platform.component.app1-ui.sq-project-key' ${{ inputs.CONFIG_FILE }} > "$CLOUDBEES_OUTPUTS/SQ-PROJECT-KEY"
-        yq '.cb-platform.component.app1-ui.artifact-destination' ${{ inputs.CONFIG_FILE }} > "$CLOUDBEES_OUTPUTS/ARTIFACT-DESTINATION"
-        yq '.cb-platform.component.app1-ui.kaniko-build-args' ${{ inputs.CONFIG_FILE }} > "$CLOUDBEES_OUTPUTS/KANIKO-BUILD-ARGS"
-        yq '.cb-platform.component.app1-ui.kaniko-labels' ${{ inputs.CONFIG_FILE }} > "$CLOUDBEES_OUTPUTS/KANIKO-LABELS"
-        yq '.cb-platform.component.app1-ui.dockerfile' ${{ inputs.CONFIG_FILE }} > "$CLOUDBEES_OUTPUTS/DOCKERFILE"
+        yq '.cb-platform.component.app1-ui.context' ${{ inputs.CONFIG_FILE }} | tr -d '\n' > "$CLOUDBEES_OUTPUTS/CONTEXT"
+        yq '.cb-platform.component.app1-ui.mvn-compile-args' ${{ inputs.CONFIG_FILE }} | tr -d '\n' > "$CLOUDBEES_OUTPUTS/MVN-COMPILE-ARGS"
+        yq '.cb-platform.component.app1-ui.mvn-test-args' ${{ inputs.CONFIG_FILE }} | tr -d '\n' > "$CLOUDBEES_OUTPUTS/MVN-TEST-ARGS"
+        yq '.cb-platform.component.app1-ui.sq-project-key' ${{ inputs.CONFIG_FILE }} | tr -d '\n' > "$CLOUDBEES_OUTPUTS/SQ-PROJECT-KEY"
+        yq '.cb-platform.component.app1-ui.artifact-destination' ${{ inputs.CONFIG_FILE }} | tr -d '\n' > "$CLOUDBEES_OUTPUTS/ARTIFACT-DESTINATION"
+        yq '.cb-platform.component.app1-ui.kaniko-build-args' ${{ inputs.CONFIG_FILE }} | tr -d '\n' > "$CLOUDBEES_OUTPUTS/KANIKO-BUILD-ARGS"
+        yq '.cb-platform.component.app1-ui.kaniko-labels' ${{ inputs.CONFIG_FILE }} | tr -d '\n' > "$CLOUDBEES_OUTPUTS/KANIKO-LABELS"
+        yq '.cb-platform.component.app1-ui.dockerfile' ${{ inputs.CONFIG_FILE }} | tr -d '\n' > "$CLOUDBEES_OUTPUTS/DOCKERFILE"
 
 
     - id: ci-maven3_9
@@ -82,16 +82,15 @@ runs:
         echo Dockerfile path is ${{ steps.readconfig.outputs.DOCKERFILE }}
         ls -l ${{ steps.readconfig.outputs.DOCKERFILE }}
 
-    # - id: kaniko
-    #   name: Upload via Kaniko
-    #   uses: cloudbees-io/kaniko@v1
-    #   with:
-    #       dockerfile: ${{ steps.readconfig.outputs.DOCKERFILE }}
-    #       context: ${{ steps.readconfig.outputs.CONTEXT }}
-    #       # context: ${{ cloudbees.workspace }}
-    #       destination: ${{ steps.readconfig.outputs.ARTIFACT-DESTINATION }}
-    #       build-args: ${{ steps.readconfig.outputs.KANIKO-BUILD-ARGS }}
-    #       labels: ${{ steps.readconfig.outputs.KANIKO-LABELS }}
+    - id: kaniko
+      name: Upload via Kaniko
+      uses: cloudbees-io/kaniko@v1
+      with:
+          dockerfile: ${{ steps.readconfig.outputs.DOCKERFILE }}
+          context: ${{ steps.readconfig.outputs.CONTEXT }}
+          destination: ${{ steps.readconfig.outputs.ARTIFACT-DESTINATION }}
+          build-args: ${{ steps.readconfig.outputs.KANIKO-BUILD-ARGS }}
+          labels: ${{ steps.readconfig.outputs.KANIKO-LABELS }}
 
     - id: kaniko
       name: Upload via Kaniko
