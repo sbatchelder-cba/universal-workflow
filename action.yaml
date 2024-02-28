@@ -32,19 +32,19 @@ runs:
       shell: sh
       run: |
         apk add yq
-        yq '.cb-platform.component.app1-ui.context' ${{ inputs.CONFIG_FILE}} > "$CLOUDBEES_OUTPUTS/CONTEXT"
-        yq '.cb-platform.component.app1-ui.mvn-compile-args' ${{ inputs.CONFIG_FILE}} > "$CLOUDBEES_OUTPUTS/MVN-COMPILE-ARGS"
-        yq '.cb-platform.component.app1-ui.mvn-test-args' ${{ inputs.CONFIG_FILE}} > "$CLOUDBEES_OUTPUTS/MVN-TEST-ARGS"
-        yq '.cb-platform.component.app1-ui.sq-project-key' ${{ inputs.CONFIG_FILE}} > "$CLOUDBEES_OUTPUTS/SQ-PROJECT-KEY"
-        yq '.cb-platform.component.app1-ui.artifact-destination' ${{ inputs.CONFIG_FILE}} > "$CLOUDBEES_OUTPUTS/ARTIFACT-DESTINATION"
-        yq '.cb-platform.component.app1-ui.kaniko-build-args' ${{ inputs.CONFIG_FILE}} > "$CLOUDBEES_OUTPUTS/KANIKO-BUILD-ARGS"
-        yq '.cb-platform.component.app1-ui.kaniko-label' ${{ inputs.CONFIG_FILE}} > "$CLOUDBEES_OUTPUTS/KANIKO-LABEL"
-        yq '.cb-platform.component.app1-ui.dockerfile' ${{ inputs.CONFIG_FILE}} > "$CLOUDBEES_OUTPUTS/DOCKERFILE"
+        yq '.cb-platform.component.app1-ui.context' ${{ inputs.CONFIG_FILE }} > "$CLOUDBEES_OUTPUTS/CONTEXT"
+        yq '.cb-platform.component.app1-ui.mvn-compile-args' ${{ inputs.CONFIG_FILE }} > "$CLOUDBEES_OUTPUTS/MVN-COMPILE-ARGS"
+        yq '.cb-platform.component.app1-ui.mvn-test-args' ${{ inputs.CONFIG_FILE }} > "$CLOUDBEES_OUTPUTS/MVN-TEST-ARGS"
+        yq '.cb-platform.component.app1-ui.sq-project-key' ${{ inputs.CONFIG_FILE }} > "$CLOUDBEES_OUTPUTS/SQ-PROJECT-KEY"
+        yq '.cb-platform.component.app1-ui.artifact-destination' ${{ inputs.CONFIG_FILE }} > "$CLOUDBEES_OUTPUTS/ARTIFACT-DESTINATION"
+        yq '.cb-platform.component.app1-ui.kaniko-build-args' ${{ inputs.CONFIG_FILE }} > "$CLOUDBEES_OUTPUTS/KANIKO-BUILD-ARGS"
+        yq '.cb-platform.component.app1-ui.kaniko-label' ${{ inputs.CONFIG_FILE }} > "$CLOUDBEES_OUTPUTS/KANIKO-LABEL"
+        yq '.cb-platform.component.app1-ui.dockerfile' ${{ inputs.CONFIG_FILE }} > "$CLOUDBEES_OUTPUTS/DOCKERFILE"
 
 
     - id: ci-maven3_9
       #if: ${{ inputs.MVN-COMPILE-ARGS == '' }}
-      if: ${{ steps.readconfig.outputs.MVN-COMPILE-ARGS }}
+      if: ${{ steps.readconfig.outputs.MVN-COMPILE-ARGS == '' }}
       uses: sbatchelder-cba/ci-maven-3.9@v0.0.3
       with:
         # context: ${{ inputs.CONTEXT }}
