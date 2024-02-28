@@ -31,6 +31,7 @@ runs:
       uses: docker://python:3.12-alpine3.19
       shell: sh
       run: |
+        pwd ; ls -la
         apk add yq
         yq '.cb-platform.component.app1-ui.context' ${{ inputs.CONFIG_FILE }} > "$CLOUDBEES_OUTPUTS/CONTEXT"
         yq '.cb-platform.component.app1-ui.mvn-compile-args' ${{ inputs.CONFIG_FILE }} > "$CLOUDBEES_OUTPUTS/MVN-COMPILE-ARGS"
