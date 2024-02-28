@@ -26,7 +26,7 @@ runs:
         repository: ${{ cloudbees.scm.repository }}
 
     # Right now, the app name, app1-ui is coded in. Need to make the config
-    # file more agnostic or account for the name. 
+    # file more agnostic or account for the name.
     - name: Read config.yaml
       id: readconfig
       kind: build
@@ -86,7 +86,8 @@ runs:
       uses: cloudbees-io/kaniko@
       with:
           dockerfile: ${{ steps.readconfig.outputs.DOCKERFILE }}
-          context: ${{ steps.readconfig.outputs.CONTEXT }}
+          # context: ${{ steps.readconfig.outputs.CONTEXT }}
+          context: ${{ cloudbees.workspace }}
           destination: ${{ steps.readconfig.outputs.ARTIFACT-DESTINATION }}
           build-args: ${{ steps.readconfig.outputs.KANIKO-BUILD-ARGS }}
           labels: ${{ steps.readconfig.outputs.KANIKO-LABELS }}
