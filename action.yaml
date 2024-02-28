@@ -25,6 +25,8 @@ runs:
         provider: ${{ cloudbees.scm.provider }}
         repository: ${{ cloudbees.scm.repository }}
 
+    # Right now, the app name, app1-ui is coded in. Need to make the config
+    # file more agnostic or account for the name. 
     - name: Read config.yaml
       id: readconfig
       kind: build
@@ -39,13 +41,13 @@ runs:
         yq '.cb-platform.component.app1-ui.sq-project-key' ${{ inputs.CONFIG_FILE }} > "$CLOUDBEES_OUTPUTS/SQ-PROJECT-KEY"
         yq '.cb-platform.component.app1-ui.artifact-destination' ${{ inputs.CONFIG_FILE }} > "$CLOUDBEES_OUTPUTS/ARTIFACT-DESTINATION"
         yq '.cb-platform.component.app1-ui.kaniko-build-args' ${{ inputs.CONFIG_FILE }} > "$CLOUDBEES_OUTPUTS/KANIKO-BUILD-ARGS"
-        yq '.cb-platform.component.app1-ui.kaniko-label' ${{ inputs.CONFIG_FILE }} > "$CLOUDBEES_OUTPUTS/KANIKO-LABEL"
+        yq '.cb-platform.component.app1-ui.kaniko-labels' ${{ inputs.CONFIG_FILE }} > "$CLOUDBEES_OUTPUTS/KANIKO-LABELS"
         yq '.cb-platform.component.app1-ui.dockerfile' ${{ inputs.CONFIG_FILE }} > "$CLOUDBEES_OUTPUTS/DOCKERFILE"
 
 
     - id: ci-maven3_9
       #if: ${{ inputs.MVN-COMPILE-ARGS == '' }}
-      if: ${{ steps.readconfig.outputs.MVN-COMPILE-ARGS == '' }}
+      if: ${{ steps.readconfig.outputs.MVN-COMPILE-ARGS != '' }}
       uses: sbatchelder-cba/ci-maven-3.9@v0.0.3
       with:
         # context: ${{ inputs.CONTEXT }}
@@ -53,14 +55,14 @@ runs:
         mvn-compile-args: ${{ steps.readconfig.outputs.MVN-COMPILE-ARGS }}
         mvn-test-args: ${{ steps.readconfig.outputs.MVN-TEST-ARGS }}
 
-    # custom action is evaluated before the conditional... annoying
-    # - id: ci-groovy3_9
-    #   if: ${{ inputs.GROOVY-BUILD-ARGS != '' }}
-    #   uses: sbatchelder-cba/ci-groovy@v0.0.1
+    # custom action is evaluated before the conditional; must exist before stubbing
+    # - id: ci-gradle
+    #   if: ${{ inputs.GRADLE-BUILD-ARGS != '' }}
+    #   uses: sbatchelder-cba/ci-gradle@v0.0.1
     #   with:
     #     context: ${{ inputs.CONTEXT }}
-    #     groovy-build-args: ${{ inputs.GROOVY-BUILD-ARGS }}
-    #     groovy-test-args: ${{ inputs.GROOVY-TEST-ARGS }}
+    #     gradle-build-args: ${{ inputs.GRADLE-BUILD-ARGS }}
+    #     gradle-test-args: ${{ inputs.GRADLE-TEST-ARGS }}
 
     # Not sure if kaniko bits should live here or in the tech specific CI custom action
     # It is DRY-er if it lives here, so it is here now
@@ -97,7 +99,7 @@ runs:
       uses: sbatchelder-cba/sonarqube-cba@v0.0.3
       with:
         sources: ${{ steps.readconfig.outputs.CONTEXT }}
-        project-key: customer1-app1
+        project-key: ${{ steps.readconfig.outputs.SQ-PROJECT-KEY }}
         host-url: "https://sonarqube.cb-demos.io"
         token: ${{ inputs.SONARQUBE-TOKEN }}
 
